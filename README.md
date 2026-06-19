@@ -120,35 +120,36 @@ Saat bioskop membatalkan 1 jadwal tayang (film batal, studio rusak), ratusan ord
 
 ## API Contract
 
-### Konvensi umum
+### Skema
 
-- **Base path:** semua endpoint diawali `/api`.
-- **Autentikasi:** kirim header `Authorization: Bearer <access_token>` (kecuali endpoint publik). Token didapat dari `POST /api/auth/login`.
-- **Content-Type:** `application/json`.
-- **Format respons** (selalu salah satu dari berikut):
-  - Sukses berdata → `{ "data": { ... } }`
-  - Sukses tanpa data → `{ "message": "..." }`
-  - Error → `{ "error": "..." }`
-- **Pagination** (endpoint list): query `page` (default `1`), `limit` (default `10`), `sort_by` (default `created_at`), `sort_dir` (`ASC`|`DESC`, default `DESC`). Respons list berbentuk `{ "data": { "<plural>": [...], "total_page": n, "total_data": n } }`.
-- **Metadata** pada setiap objek: `created_at`, `modified_at`, `created_by`, `modified_by` (ISO-8601 / RFC3339).
-- **Role:** `user`, `admin`, `superadmin`. Aturan akses default:
-  - Tulis katalog & jadwal (`POST`/`PATCH`/`DELETE`) = `admin`/`superadmin`.
-  - Baca = semua user terautentikasi.
-  - Booking & refund mandiri = `user`/`admin`/`superadmin` (pemilik).
-
-### Kode status
-
-| Kode | Arti |
-|---|---|
-| `200 OK` | Permintaan sukses (baca/update/aksi) |
-| `201 Created` | Resource dibuat |
-| `202 Accepted` | Diterima, diproses asinkron (refund) |
-| `400 Bad Request` | Validasi gagal / data tidak valid |
-| `401 Unauthorized` | Token hilang/invalid, atau secret webhook salah |
-| `403 Forbidden` | Role tidak punya akses |
-| `404 Not Found` | Resource tidak ditemukan |
-| `409 Conflict` | Bentrok (kursi rebutan, jadwal overlap, dobel) |
-| `500 Internal Server Error` | Kesalahan server |
+```json
+// Success with data
+{
+  "data": { ... }
+}
+```
+```json
+// Success with pagination
+{
+  "data": {
+    "<plural>": [...],
+    "total_page": n,
+    "total_data": n
+  }
+}
+```
+```json
+// Success without data
+{
+  "message": "..."
+}
+```
+```json
+// error
+{
+  "error": "..."
+}
+```
 
 ---
 
@@ -377,9 +378,7 @@ Validasi: `email` (format email, wajib), `password` (min 8, wajib), `full_name` 
 
 | Method | Path | Auth | Keterangan |
 |---|---|---|---|
-| `POST` | `/api/payments/webhook` | **secret header** | Settle pembayaran (dipicu gateway / reviewer) |
-
-Tidak butuh JWT, tetapi **wajib** header `X-Webhook-Secret: <PAYMENT_WEBHOOK_SECRET>`. Idempotent (aman dipanggil berulang).
+| `POST` | `/api/payments/webhook` | `X-Webhook-Secret: <secret>` | Settle pembayaran (dipicu gateway / reviewer) |
 
 | Field | Tipe | Wajib | Catatan |
 |---|---|---|---|
