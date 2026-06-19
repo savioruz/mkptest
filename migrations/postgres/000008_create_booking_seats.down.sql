@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP TABLE IF EXISTS booking_seats CASCADE;
+
+COMMIT;

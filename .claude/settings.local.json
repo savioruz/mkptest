@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk ls *)",
+      "Bash(rtk find *)",
+      "Bash(/usr/bin/find . -type d \\\\\\( -iname '*product*' -o -iname '*stock*' \\\\\\) -not -path './.git/*')",
+      "Bash(/usr/bin/find . -type f \\\\\\( -iname '*product*' -o -iname '*stock*' \\\\\\) -not -path './.git/*')",
+      "Bash(/usr/bin/find ./internal/domains/product ./internal/domains/productcategory ./internal/domains/productstock ./internal/domains/stocklog ./internal/handlers/product ./internal/handlers/productcategory ./internal/handlers/productstock ./internal/handlers/stocklog -type f)",
+      "Bash(rtk grep *)"
+    ]
+  }
+}

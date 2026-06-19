@@ -1,0 +1,43 @@
+# Ignore IDE stuff
+.vscode/
+.idea/
+
+# Ignore executable files
+.build/
+.builder/
+.env
+
+# Ignore mock files
+**/mock.go
+**/mock*
+
+# Ignore generated files
+**gen.go
+
+# Ignore build artifacts
+node_modules/
+dist/
+tmp/
+bin/
+.vercel
+
+# Ignore docs
+docs/
+
+# Ignore permission file
+permissions/permissions.json
+
+# Ignore coverage reports
+*.log
+*.log.*
+*.log-*
+*.log/*
+*.log-/*
+*.log-*/
+
+# Ignore build results
+engine
+
+# Ignore OS files
+.DS_Store
+Thumbs.db

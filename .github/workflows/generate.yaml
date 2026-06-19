@@ -1,0 +1,58 @@
+name: Generate & Push Gen Files
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: generate
+        run: |
+          go generate -skip="mockgen" ./...
+
+      - name: Create or update PR with generated files
+        uses: peter-evans/create-pull-request@v5
+        id: create-pr
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          title: "chore: update generated files and documentation"
+          body: |
+            This PR updates generated files and documentation from the latest `go generate` output.
+            
+            **Changes include:**
+            - `*gen.go` files from code generation
+            - Documentation files in `docs/` folder
+            
+            It was created automatically by the GitHub Actions workflow.
+            
+            **Auto-merge is enabled** - this PR will be automatically merged once all checks pass.
+          commit-message: "chore: auto-generate files and update docs"
+          branch: sync
+          base: main
+          delete-branch: false
+          add-paths: |
+            **/*gen.go
+            docs/
+
+      - name: Enable auto-merge for PR
+        if: steps.create-pr.outputs.pull-request-number
+        run: |
+          gh pr merge ${{ steps.create-pr.outputs.pull-request-number }} --auto --squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
