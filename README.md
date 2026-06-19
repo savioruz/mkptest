@@ -42,8 +42,8 @@ graph TD
     C["user<br/>web / mobile"] --> GW["API Gateway / Load Balancer"]
     GW --> APP["Backend Golang<br/>auth · katalog · booking · payment · refund"]
 
-    APP -->|kunci kursi & cache| R[("Redis<br/>cache + locks")]
-    APP -->|sumber kebenaran| PG[("PostgreSQL<br/>primary + read replica")]
+    APP -->|Cache| R[("Redis<br/>cache + locks")]
+    APP -->|Database| PG[("PostgreSQL<br/>primary + read replica")]
     APP -->|publish event| K{{"Kafka<br/>event bus"}}
     APP -->|charge| PAY["Payment Gateway"]
     PAY -.->|webhook callback| APP
